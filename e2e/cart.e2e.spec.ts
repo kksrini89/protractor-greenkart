@@ -6,6 +6,7 @@ describe('GreenKart:', () => {
   const url: string = 'https://rahulshettyacademy.com/seleniumPractise/#/';
   const veggieFullName: string = 'grape';
   const veggiePartialName: string = 'gra';
+  const randomName: string = 'xyz';
 
   let cartPO: CartPageObject;
 
@@ -32,6 +33,7 @@ describe('GreenKart:', () => {
   it('Add to cart: Items Count Check', async () => {
     browser.waitForAngularEnabled(false);
     //   Navigate to 'https://rahulshettyacademy.com/seleniumPractise/#/'
+
     await cartPO.navigateTo(url);
 
     await browser.sleep(1000);
@@ -58,49 +60,20 @@ describe('GreenKart:', () => {
   it('Add to cart: Price Check', async () => {
     await browser.waitForAngularEnabled(false);
     await cartPO.navigateTo(url);
-
-    // await browser.sleep(1000);
     await browser.executeScript('window.scrollTo(0,0)');
-    // await browser.executeScript("document.querySelector('.products-wrapper').scrollIntoView({ behavior: 'auto' })");
-    //   Query the list items
-    // const totalProductsCount = await cartPO.products.count();
+
     let totalPrice: number = 0;
 
     (await element.all(by.css('.product-action button'))).forEach(async (el: ElementFinder) => {
       await browser.actions().mouseMove(el).click().perform();
     });
 
-    await browser.sleep(2500);
+    await browser.sleep(3000);
 
     (await element.all(by.css('.product-price'))).forEach(async (el: ElementFinder) => {
       const price = await el.getText();
       if (!!price) totalPrice += parseInt(price);
     });
-
-    // element.all(by.css('.product')).each(async (item, index) => {
-    //   await browser
-    //     .actions()
-    //     .mouseMove(item.element(by.css(".product-action button")))
-    //     .click()
-    //     .perform();
-    //   const price = await item.element(by.css("p[class='product-price']")).getText();
-    //   totalPrice += parseInt(price);
-    // });
-
-    // let zIndex = 0;
-    // const items = element.all(by.css('.product'));
-    // (async function loop() {
-    //   const el: ElementFinder = items.get(zIndex);
-    //   await browser
-    //     .actions()
-    //     .mouseMove(el.element(by.css("div[class='product-action'] button")))
-    //     .click()
-    //     .perform();
-    //   const price = await el.element(by.css("p[class='product-price']")).getText();
-    //   totalPrice += parseInt(price);
-    //   zIndex += 1;
-    //   await loop();
-    // })();
 
     await browser.sleep(3000);
     console.log('--------------------Output: Test Case 2----------------------');
@@ -182,5 +155,26 @@ describe('GreenKart:', () => {
     console.log('shownProducts', shownProducts.length);
 
     expect(matchVeggiesLength).toBe(shownProducts.length);
+  });
+
+  it('Search Veggies with Random Name: Failure', async () => {
+    await cartPO.navigateTo(url);
+    browser.waitForAngularEnabled(false);
+
+    await browser.executeScript('window.scrollTo(0,0)');
+
+    console.log('--------------------Output: Test Case 5----------------------');
+
+    // Search Veggie
+    await cartPO.searchInputEl.sendKeys(randomName);
+
+    await browser.sleep(1000);
+
+    // To check no veggie ui element exists
+    const noVeggieElExists: boolean = await element(by.css('.no-results')).isPresent();
+
+    console.log('No Veggie Element Exists: ', noVeggieElExists);
+
+    expect(noVeggieElExists).toBe(true);
   });
 });

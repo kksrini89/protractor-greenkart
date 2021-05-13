@@ -14,6 +14,6 @@ export class CartPageObject {
   }
 
   async navigateTo(url: string) {
-    await browser.get('https://rahulshettyacademy.com/seleniumPractise/#/');
+    await browser.get(url);
   }
 }
